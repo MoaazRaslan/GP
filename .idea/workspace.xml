@@ -5,10 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7d3c8470-6327-41bf-8012-c53d0b3fd9e5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/routers/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/git_token.txt" beforeDir="false" afterPath="$PROJECT_DIR$/git_token.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routers/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/auth.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

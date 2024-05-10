@@ -119,6 +119,7 @@ async def create_user(cur: CreateUser, db: Session = Depends(get_db)):
 
 
 
+
 @router.post("/log_in",status_code=200)
 async def get_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     if not verify_user(form_data.username, form_data.password, db):
