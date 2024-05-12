@@ -65,12 +65,12 @@ def create_access_token(user, expire_delta: Optional[timedelta] = None):
         "photo":user.photo,
         "exp": exp
     }
-    return jwt.encode(encoded, config("SECRET_KEY"), config("ALGORITH"))
+    return jwt.encode(encoded, config("SECRET_KEY"), config("ALGORITHM"))
 
 
 def get_information_token(token: str = Depends(oauth2_bearer)):
     try:
-        user = jwt.decode(token, config("SECRET_KEY"), config("ALGORITH"))
+        user = jwt.decode(token, config("SECRET_KEY"), config("ALGORITHM"))
         user_name = user.get("sub")
         user_id = user.get("id")
         if user_name is None or user_id is None:
