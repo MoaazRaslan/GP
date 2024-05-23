@@ -1,6 +1,6 @@
 from fastapi import  Depends, APIRouter,status
 from models import schemas
-from database import engine, SessionLocal
+from database import engine, get_db
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from models.instances import CreateUser
@@ -13,15 +13,6 @@ router = APIRouter(
     tags=["Auth"],
     responses={401:{"user":"Not authurized"}}
 )
-
-
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
-
 
 @router.post("/sign_up",status_code=status.HTTP_200_OK)
 async def sign_up(cur: CreateUser,db : Session = Depends(get_db)):

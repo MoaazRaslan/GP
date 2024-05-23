@@ -10,18 +10,10 @@ from sqlalchemy.orm import Session
 
 from models import schemas
 from models.instances import CreateUser
-from database import SessionLocal
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
 
 
 def get_password_hash(password):
