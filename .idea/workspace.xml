@@ -5,13 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7d3c8470-6327-41bf-8012-c53d0b3fd9e5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/controller/auth.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/instances.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/JetClient/state.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/JetClient/state.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/instances.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/instances.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/schemas.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routers/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schemas.db" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,16 +29,16 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///pre-request-script-05cda19e.js" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///test-script-05cda19e.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///pre-request-script-fc960b38.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///test-script-fc960b38.js" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "6516cbff",
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;6516cbff&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2fexOs8elqo8Q9URPI0JjsfoOp1" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -46,12 +46,13 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.auth.executor": "Run",
     "Python.main.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/moaaz/Desktop/GP",
-    "settings.editor.selected.configurable": "preferences.editor"
+    "last_opened_file_path": "/home/moaaz/Desktop/test",
+    "settings.editor.selected.configurable": "preferences.keymap"
   }
 }]]></component>
   <component name="RecentsManager">

@@ -7,6 +7,6 @@ class CreateUser(BaseModel):
     last_name :str
     photo :str
     address :str
-    cart_id : str
+    cart_id : int
     role :int
     favorites : str

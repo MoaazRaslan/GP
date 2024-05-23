@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JetClientState">
+    <option name="draftsState">
+      <draftsState>
+        <option name="requests">
+          <list>
+            <requestState>
+              <option name="auth">
+                <authState>
+                  <option name="bearer">
+                    <jG>
+                      <option name="token" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZXhwIjoxNzE2NTE2MDYwfQ.in7pKbPgaYTiP88ztCch01NW8-jvhYsqkYACbis2PYQ" />
+                    </jG>
+                  </option>
+                  <option name="type" value="BEARER" />
+                </authState>
+              </option>
+              <option name="id" value="fc960b38-3de5-4f3b-907d-bd6c7d06d9cc" />
+              <option name="method" value="POST" />
+              <option name="name" value="Draft" />
+              <option name="url" value="http://127.0.0.1:8000/auth/changerole/1" />
+            </requestState>
+          </list>
+        </option>
+      </draftsState>
+    </option>
     <option name="id" value="0da1d92c-73e4-406f-892a-f53dede69cfb" />
   </component>
 </project>

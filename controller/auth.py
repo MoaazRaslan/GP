@@ -32,12 +32,12 @@ def verify_password(plain_password, hashed_password):
     return bcrypt_context.verify(plain_password, hashed_password)
 
 
-def create_access_token(user, expire_delta: Optional[timedelta] = None):
-    if not expire_delta:
-        expire_delta = timedelta(minutes=15)
+def create_access_token(user_id):
+    de = int(config("TIME_DELTA"))
+    expire_delta = timedelta(hours=de)
     exp = datetime.utcnow() + expire_delta
     encoded = {
-        "id": user.id,
+        "id": user_id,
         "exp": exp
     }
     return jwt.encode(encoded, config("SECRET_KEY"), config("ALGORITHM"))
@@ -46,11 +46,10 @@ def create_access_token(user, expire_delta: Optional[timedelta] = None):
 def get_information_token(token: str = Depends(oauth2_bearer)):
     try:
         user = jwt.decode(token, config("SECRET_KEY"), config("ALGORITHM"))
-        user_name = user.get("sub")
         user_id = user.get("id")
-        if user_name is None or user_id is None:
+        if user_id is None:
             raise HTTPException(status_code=404, detail="User not found !")
-        return {"user_name": user_name, "user_id": user_id}
+        return {"user_id": user_id}
     except JWTError:
         raise HTTPException(status_code=404, detail="User not found !")
 
@@ -64,8 +63,28 @@ def verify_user(user_name, password, db):
         return False
     return True
 
+def refresh_token(token : str = Depends(oauth2_bearer)):
+    info = get_information_token(token)
+    refreshed_token = create_access_token(info .get("user_id"))
+    return refreshed_token
 
 
+async def changerole(db : Session,second_person_id :int ,token : str = Depends(oauth2_bearer)):
+    info = get_information_token(token)
+    id = info.get("user_id")
+    if id is None:
+        raise HTTPException(status_code=404,detail="User not found!")
+    user = db.query(schemas.User).filter(id == schemas.User.id).first()
+    second_person = db.query(schemas.User).filter(second_person_id == schemas.User.id).first()
+    if user is None or second_person is None:
+        raise HTTPException(status_code=404,detail="User not found!")
+    if user.role >= 2:
+        second_person.role ^=1
+    else:
+        raise HTTPException(status_code=403,detail="Unauthorized")
+    db.add(second_person)
+    db.commit()
+    return {"message":"Done"}
 
 async def signup(cur: CreateUser, db: Session ):
     newUser = schemas.User()
@@ -80,7 +99,7 @@ async def signup(cur: CreateUser, db: Session ):
     newUser.role = 0
     db.add(newUser)
     db.commit()
-    token = create_access_token(newUser, timedelta(minutes=20))
+    token = create_access_token(newUser.id)
     user_info = {
         "user_name": newUser.user_name,
         "email": newUser.email,
@@ -98,7 +117,7 @@ async def signin(db: Session, form_data: OAuth2PasswordRequestForm = Depends()):
     if not verify_user(form_data.username, form_data.password, db):
         raise HTTPException(status_code=404, detail="User not found !")
     user = db.query(schemas.User).filter(schemas.User.user_name == form_data.username).first()
-    token = create_access_token(user, timedelta(minutes=20))
+    token = create_access_token(user.id)
     user_info = {
         "user_name": user.user_name,
         "email": user.email,

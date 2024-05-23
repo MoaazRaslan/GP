@@ -5,7 +5,6 @@ from sqlalchemy.orm import session
 from routers import auth
 
 app = FastAPI()
-
 app.include_router(auth.router)
 schemas.Base.metadata.create_all(bind=engine)
 
