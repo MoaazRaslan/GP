@@ -10,3 +10,13 @@ class CreateUser(BaseModel):
     cart_id : int
     role :int
     favorites : str
+
+class CreateProduct(BaseModel):
+    title: str
+    name: str
+    photo: str
+    price: float
+    description: str
+    amount: int
+    category: str
+    tags: str

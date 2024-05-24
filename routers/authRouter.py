@@ -4,7 +4,7 @@ from database import engine, get_db
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from models.instances import CreateUser
-from controller.auth import signup,signin,changerole,oauth2_bearer
+from controllers.authcontroller import signup,signin,changerole,oauth2_bearer
 schemas.Base.metadata.create_all(bind=engine)
 
 
