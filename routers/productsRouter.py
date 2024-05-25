@@ -1,5 +1,7 @@
+import sys
+sys.path.append("..")
 from fastapi import Depends, APIRouter, status
-from sqlalchemy.orm import Sessoin
+from sqlalchemy.orm import Session
 from database import get_db
 
 from models.instances import CreateProduct
@@ -10,6 +12,6 @@ router = APIRouter(
     tags = ["product"]
 )
 
-router.post("/", status_code = status.HTTP_201_CREATED)
-async def create_product_handler(product: CreateProduct, db: Sessoin = Depends(get_db)):
+@router.post("/addproduct", status_code = status.HTTP_201_CREATED)
+async def create_product_handler(product: CreateProduct, db: Session = Depends(get_db)):
     return create_product()
