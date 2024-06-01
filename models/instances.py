@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 class CreateUser(BaseModel):
-    user_name: str
+    username: str
     email: str
     password: str
     first_name :str
@@ -8,7 +8,7 @@ class CreateUser(BaseModel):
     photo :str
     address :str
     cart_id : int
-    role :int
+    role : str
     favorites : str
 
 class CreateProduct(BaseModel):

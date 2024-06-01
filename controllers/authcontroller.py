@@ -25,14 +25,14 @@ def verify_password(plain_password, hashed_password):
 
 
 def create_access_token(user_id):
-    de = int(config("TIME_DELTA"))
+    de = int(config("TIMEDELTA"))
     expire_delta = timedelta(hours=de)
     exp = datetime.utcnow() + expire_delta
     encoded = {
         "id": user_id,
         "exp": exp
     }
-    return jwt.encode(encoded, config("SECRET_KEY"), config("ALGORITHM"))
+    return jwt.encode(encoded, config("SECRETKEY"), config("ALGORITHM"))
 
 
 def get_information_token(token: str = Depends(oauth2_bearer)):
@@ -46,9 +46,9 @@ def get_information_token(token: str = Depends(oauth2_bearer)):
         raise HTTPException(status_code=404, detail="User not found !")
 
 
-def verify_user(user_name, password, db):
+def verify_user(username, password, db):
     user = db.query(schemas.User) \
-        .filter(schemas.User.user_name == user_name).first()
+        .filter(schemas.User.username == username).first()
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -78,9 +78,9 @@ async def changerole(db : Session,second_person_id :int ,token : str = Depends(o
     db.commit()
     return {"message":"Done"}
 
-async def signup(cur: CreateUser, db: Session ):
+async def sign_up_handler(cur: CreateUser, db: Session ):
     newUser = schemas.User()
-    newUser.user_name = cur.user_name
+    newUser.username = cur.username
     newUser.first_name = cur.first_name
     newUser.email = cur.email
     newUser.last_name = cur.last_name
@@ -88,37 +88,37 @@ async def signup(cur: CreateUser, db: Session ):
     newUser.address = cur.address
     hashed_password = get_password_hash(cur.password)
     newUser.hashed_password = hashed_password
-    newUser.role = 0
+    newUser.role = cur.role
     db.add(newUser)
     db.commit()
     token = create_access_token(newUser.id)
-    user_info = {
-        "user_name": newUser.user_name,
-        "email": newUser.email,
-        "address": newUser.address,
-        "first_name": newUser.first_name,
-        "last_name": newUser.last_name,
-        "photo": newUser.photo,
-    }
     return {
+        'status': 'success',
         'token': token,
-        'user_info': user_info
+        'data': {
+            "username": newUser.username,
+            "email": newUser.email,
+            "address": newUser.address,
+            "first_name": newUser.first_name,
+            "last_name": newUser.last_name,
+            "photo": newUser.photo
+        }   
     }
-
-async def signin(db: Session, form_data: OAuth2PasswordRequestForm = Depends()):
+async def sign_in_handler(db: Session, form_data: OAuth2PasswordRequestForm = Depends()):
     if not verify_user(form_data.username, form_data.password, db):
         raise HTTPException(status_code=404, detail="User not found !")
-    user = db.query(schemas.User).filter(schemas.User.user_name == form_data.username).first()
+    user = db.query(schemas.User).filter(schemas.User.username == form_data.username).first()
+    print(user)
     token = create_access_token(user.id)
-    user_info = {
-        "user_name": user.user_name,
-        "email": user.email,
-        "address": user.address,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "photo": user.photo,
-    }
     return {
+        'status': 'success',
         'token': token,
-        'user_info':user_info
+        'data': {
+            "username": user.username,
+            "email": user.email,
+            "address": user.address,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "photo": user.photo,
+        }
     }

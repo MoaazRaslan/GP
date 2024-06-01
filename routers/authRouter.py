@@ -4,7 +4,7 @@ from database import engine, get_db
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from models.instances import CreateUser
-from controllers.authcontroller import signup,signin,changerole,oauth2_bearer
+from controllers.authcontroller import sign_up_handler,sign_in_handler,changerole,oauth2_bearer
 schemas.Base.metadata.create_all(bind=engine)
 
 
@@ -14,15 +14,13 @@ router = APIRouter(
     responses={401:{"user":"Not authurized"}}
 )
 
-@router.post("/sign_up",status_code=status.HTTP_200_OK)
+@router.post("/signup",status_code=status.HTTP_200_OK)
 async def sign_up(cur: CreateUser,db : Session = Depends(get_db)):
-    info = await signup(cur,db)
-    return info
+    return await sign_up_handler(cur, db)
 
-@router.post("/log_in",status_code=status.HTTP_200_OK)
+@router.post("/login",status_code=status.HTTP_200_OK)
 async def sign_in(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    info = await signin(db,form_data)
-    return info
+    return await sign_in_handler(db,form_data)
 
 @router.post("/changerole/{second_user_id}",status_code=status.HTTP_200_OK)
 async def change_role(second_user_id,token: str = Depends(oauth2_bearer),db : Session = Depends(

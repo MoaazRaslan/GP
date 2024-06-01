@@ -1,4 +1,4 @@
-from fastapi import FastAPI , Depends
+from fastapi import FastAPI, Depends
 from models import schemas
 from database import engine , get_db
 from sqlalchemy.orm import session

@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 class User(Base):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True, index=True)
-    user_name = Column(String,unique=True)
+    username = Column(String,unique=True)
     first_name = Column(String)
     last_name = Column(String)
     email = Column(String)
@@ -49,7 +49,7 @@ class Order(Base):
     user_id = Column(Integer,ForeignKey("user.id"))
     status = Column(Integer)
     prod = Column(String)
-    createdAt = Column(Date)
+    created_at = Column(Date)
 
     order_user_relation = relationship("User",back_populates="user_order_relation")
     # order_product_relation = relationship("Product",back_populates="product_order_relation")
