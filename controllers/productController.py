@@ -59,3 +59,19 @@ async def delete_product_handler(db: Session, product_id: int):
     return {
         "status": "sucess",
     }
+
+
+async def update_product_handler(db: Session, product_id: int, updated_product: CreateProduct):
+    db_product = db.query(schemas.Product).filter(schemas.Product.id == product_id).first()
+    if not db_product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid product's ID")
+
+    for key, value in updated_product.model_dump().items():
+        setattr(db_product, key, value)
+
+    db.commit()
+    db.refresh(db_product)
+    return {
+        "status": "sucess",
+        "data": db_product
+    }

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 
 from models.instances import CreateProduct
-from controllers.productController import create_product, get_all_product_handler, getProduct_handler, delete_product_handler
+from controllers.productController import create_product, get_all_product_handler, getProduct_handler, delete_product_handler, update_product_handler
 
 router = APIRouter(
     prefix = "/product",
@@ -26,11 +26,14 @@ async def get_all_product(
     return await get_all_product_handler(db, page, limit, search)
 
 
-@router.get('/{product_id}', status_code=status.HTTP_200_OK)
-async def getProduct(product_id: int, db: Session = Depends(get_db)):
+@router.get("/{product_id}", status_code=status.HTTP_200_OK)
+async def get_product(product_id: int, db: Session = Depends(get_db)):
     return await getProduct_handler(product_id, db)
 
 @router.delete("/{product_id}", status_code=status.HTTP_200_OK)
 async def delete_product(product_id: int, db: Session = Depends(get_db)):
     return await delete_product_handler(db, product_id)
 
+@router.put('/{product_id}', status_code=status.HTTP_200_OK)
+async def update_product(product_id: int, db: Session = Depends(get_db)):
+    return await update_product_handler(db, product_id)
