@@ -23,9 +23,7 @@ async def sign_in(form_data: OAuth2PasswordRequestForm = Depends(), db: Session 
     return await sign_in_handler(db,form_data)
 
 @router.post("/changerole/{second_user_id}",status_code=status.HTTP_200_OK)
-async def change_role(second_user_id,token: str = Depends(oauth2_bearer),db : Session = Depends(
-    get_db
-)):
+async def change_role(second_user_id,token: str = Depends(oauth2_bearer),db : Session = Depends(get_db)):
     info = await changerole(db,second_user_id,token)
     if info.get("message") is None:
         return "NOOOOOOOOOOO"
