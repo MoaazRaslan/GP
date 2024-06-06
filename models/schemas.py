@@ -22,7 +22,6 @@ class Product(Base):
     __tablename__ = "product"
     id = Column(Integer,primary_key=True,index=True)
     title = Column(String)
-    name = Column(String)
     photo = Column(String)
     price = Column(Double)
     description = Column(String)
