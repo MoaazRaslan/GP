@@ -10,9 +10,6 @@ class CreateUser(BaseModel):
     last_name :str
     photo :str
     address :str
-    cart_id : int
-    role : str
-    favorites : str
 
 class CreateProduct(BaseModel):
     title: str

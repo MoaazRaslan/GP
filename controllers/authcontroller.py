@@ -25,14 +25,14 @@ def verify_password(plain_password, hashed_password):
 
 
 def create_access_token(user_id):
-    de = int(config("TIMEDELTA"))
+    de = int(config("TIME_DELTA"))
     expire_delta = timedelta(hours=de)
     exp = datetime.utcnow() + expire_delta
     encoded = {
         "id": user_id,
         "exp": exp
     }
-    return jwt.encode(encoded, config("SECRETKEY"), config("ALGORITHM"))
+    return jwt.encode(encoded, config("SECRET_KEY"), config("ALGORITHM"))
 
 
 def get_information_token(token: str = Depends(oauth2_bearer)):
@@ -88,7 +88,6 @@ async def sign_up_handler(cur: CreateUser, db: Session ):
     newUser.address = cur.address
     hashed_password = get_password_hash(cur.password)
     newUser.hashed_password = hashed_password
-    newUser.role = cur.role
     db.add(newUser)
     db.commit()
     token = create_access_token(newUser.id)
