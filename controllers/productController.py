@@ -2,9 +2,11 @@ from sqlalchemy.orm import Session
 from fastapi import status, HTTPException
 from models import schemas
 from models.instances import CreateProduct, UpdateProduct
+from controllers.authcontroller import get_admin_info, get_user_from_token
 
 
-async def create_product(product: CreateProduct, db: Session):
+async def create_product(product: CreateProduct, db: Session, token: str):
+    get_admin_info(db, token)
     newProduct = schemas.Product()
     newProduct.title = product.title
     newProduct.photo = product.photo
@@ -47,7 +49,8 @@ async def getProduct(product_id: int, db: Session):
         "data": product
     }
 
-async def delete_product(db: Session, product_id: int):
+async def delete_product(db: Session, product_id: int, token: str):
+    get_admin_info(db, token)
     db_product = db.query(schemas.Product).filter(schemas.Product.id == product_id).first()
     if not db_product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='invalid ID')
@@ -57,7 +60,8 @@ async def delete_product(db: Session, product_id: int):
         "status": "sucess",
     }
 
-async def update_product(db: Session, product_id: int, updated_product: UpdateProduct):
+async def update_product(db: Session, product_id: int, updated_product: UpdateProduct, token: str):
+    get_admin_info(db, token)
     db_product = db.query(schemas.Product).filter(schemas.Product.id == product_id).first()
     if not db_product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid product's ID")
@@ -72,4 +76,18 @@ async def update_product(db: Session, product_id: int, updated_product: UpdatePr
     return {
         "status": "sucess",
         "data": db_product
+    }
+
+async def rate_product(db: Session, product_id: int, number_stars: int, token: str):
+    user = get_user_from_token(db, token)
+    newRate = schemas.Rate()
+    newRate.product_id = product_id
+    newRate.user_id = user.id
+    newRate.stars = number_stars
+
+    db.add(newRate)
+    db.commit(newRate)
+    return {
+        "status": "success",
+        "data": None
     }

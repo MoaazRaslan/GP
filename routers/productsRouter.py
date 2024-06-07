@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 from database import get_db
 
 from models.instances import CreateProduct, UpdateProduct
-from controllers.productController import create_product, get_all_products, getProduct, delete_product, update_product
+from controllers.productController import create_product, get_all_products, getProduct, delete_product, update_product, rate_product
+from controllers.authcontroller import oauth2_bearer
 
 router = APIRouter(
     prefix = "/product",
@@ -13,8 +14,8 @@ router = APIRouter(
 )
 
 @router.post("/", status_code = status.HTTP_201_CREATED)
-async def create_product_handler(product: CreateProduct, db: Session = Depends(get_db)):
-    return await create_product(product, db)
+async def create_product_handler(product: CreateProduct, db: Session = Depends(get_db), token :str = Depends(oauth2_bearer)):
+    return await create_product(product, db, token)
 
 @router.get('/', status_code=status.HTTP_200_OK)
 async def get_all_product_handler(
@@ -32,9 +33,13 @@ async def get_product_handler(product_id: int, db: Session = Depends(get_db)):
 
 
 @router.put('/{product_id}', status_code=status.HTTP_200_OK)
-async def update_product_handler(product_id: int, product: UpdateProduct, db: Session = Depends(get_db)):
-    return await update_product(db, product_id, product)
+async def update_product_handler(product_id: int, product: UpdateProduct, db: Session = Depends(get_db), token :str = Depends(oauth2_bearer)):
+    return await update_product(db, product_id, product, token)
 
 @router.delete("/{product_id}", status_code=status.HTTP_200_OK)
-async def delete_product_handler(product_id: int, db: Session = Depends(get_db)):
-    return await delete_product(db, product_id)
+async def delete_product_handler(product_id: int, db: Session = Depends(get_db), token :str = Depends(oauth2_bearer)):
+    return await delete_product(db, product_id, token)
+
+@router.post('/rateProduct/{product_id}', status_code=status.HTTP_200_OK)
+async def rate_product_handler(product_id: int, number_stars: int, db: Session = Depends(get_db), token :str = Depends(oauth2_bearer)):
+    return await rate_product(db, product_id, number_stars, token)
