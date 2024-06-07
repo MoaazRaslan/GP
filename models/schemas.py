@@ -38,7 +38,7 @@ class Rate(Base):
     id = Column(Integer,primary_key=True,index=True)
     user_id = Column(Integer,ForeignKey("user.id"))
     product_id = Column(Integer,ForeignKey("product.id"))
-    start = Column(Integer)
+    stars = Column(Integer)
 
     rate_user_relation = relationship("User",back_populates="user_rate_relation")
     rate_product_relation = relationship("Product",back_populates="product_rate_relation")
