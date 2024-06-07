@@ -34,6 +34,12 @@ def create_access_token(user_id):
     }
     return jwt.encode(encoded, config("SECRET_KEY"), config("ALGORITHM"))
 
+def get_user_from_token(db : Session,token: str = Depends(oauth2_bearer)):
+    info = get_information_token(token)
+    user = db.query(schemas.User).filter(schemas.User.id == info.get("user_id"))
+    if user is None:
+        raise HTTPException(status_code=404,detail="User not found")
+    return user
 
 def get_information_token(token: str = Depends(oauth2_bearer)):
     try:

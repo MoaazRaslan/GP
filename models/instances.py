@@ -1,5 +1,6 @@
 from pydantic import BaseModel,EmailStr
 from typing import Optional
+from datetime import datetime
 
 
 class CreateUser(BaseModel):
@@ -29,3 +30,11 @@ class UpdateProduct(BaseModel):
     amount: Optional[int] = None
     category: Optional[str] = None
     tags: Optional[str] = None
+
+
+class CreateOrder(BaseModel):
+    user_id: int
+    done: bool
+    created_at:datetime
+    products:str
+    

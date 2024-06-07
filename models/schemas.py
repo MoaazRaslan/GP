@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, String, Integer,Double,Date,ForeignKey,ARRAY
+from sqlalchemy import Column, String, Integer,Double,Date,ForeignKey,ARRAY,Boolean
 from sqlalchemy.orm import relationship
 
 class User(Base):
@@ -46,8 +46,8 @@ class Order(Base):
     __tablename__ = "order"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer,ForeignKey("user.id"))
-    status = Column(Integer)
-    prod = Column(String)
+    done = Column(Boolean)
+    products = Column(String)
     created_at = Column(Date)
 
     order_user_relation = relationship("User",back_populates="user_order_relation")
