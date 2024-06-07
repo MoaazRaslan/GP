@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from models import schemas
 from database import engine , get_db
 from sqlalchemy.orm import session
-from routers import authRouter, productsRouter
+from routers import authRouter, productsRouter , profileRouter
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -22,6 +22,7 @@ app.add_middleware(
 
 app.include_router(authRouter.router)
 app.include_router(productsRouter.router)
+app.include_router(profileRouter.router)
 schemas.Base.metadata.create_all(bind=engine)
 
 @app.get("/getAll")
