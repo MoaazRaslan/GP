@@ -6,7 +6,11 @@ from controllers.authcontroller import oauth2_bearer
 from controllers.cartController import add_element_to_cart, end_cart, get_cart
 
 
-router = APIRouter()
+router = APIRouter(
+     prefix="/cart",
+    tags=["Cart"],
+    responses={401:{"cart":"Not found"}}
+)
 
 
 @router.get("/getCart",status_code=status.HTTP_201_CREATED)
