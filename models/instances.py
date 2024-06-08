@@ -11,6 +11,7 @@ class CreateUser(BaseModel):
     last_name :str
     photo :str
     address :str
+    role: int
 
 class CreateProduct(BaseModel):
     title: str
