@@ -2,46 +2,67 @@ from fastapi import APIRouter,HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
 import json
-from authcontroller import get_user_from_token
+from controllers.authcontroller import get_user_from_token
 from models import schemas
 
 
-async def create_cart(db : Session ,token : str):
+def create_cart(db : Session ,token : str):
     user = get_user_from_token(db,token)
-    order = schemas.Order()
-    order.created_at = datetime.utcnow()
-    user.cart_id = order.id
+    cart = schemas.Cart()
+    cart.created_at = datetime.utcnow()
+    cart.user_id = user.id
+    cart.done = False
+    cart.products ="[]"
+    cart.total = 0
+    db.add(cart)
+    db.commit()
+    cart = db.query(schemas.Cart).filter(schemas.Cart.done == False ,schemas.Cart.user_id == user.id ).first()
+    user.cart_id = cart.id
     db.add(user)
-    db.add(order)
     db.commit()
     return {
-        "status":"success"
+        "status":"success",
+        "products":cart.products,
+        "total":cart.total
     }
 
+async def get_cart(db: Session,token :str):
+    user = get_user_from_token(db,token)
+    if user.cart_id == 0:
+        return create_cart(db,token)
+    cart = db.query(schemas.Cart).filter(schemas.Cart.id == user.cart_id).first()
+    if cart is None :
+        return create_cart(db,token)
+    return {
+        "status":"success",
+        "products":cart.products,
+        "total":cart.total
+    }
 
 async def end_cart(db : Session, token: str):
     user = get_user_from_token(db,token)
-    order = db.query(schemas.Order).filter(schemas.Order.id == user.cart_id).first()
-    if order is None :
+    cart = db.query(schemas.Cart).filter(schemas.Cart.id == user.cart_id).first()
+    if cart is None :
         raise HTTPException(status_code=404,detail="Cart not found")
-    order.done = True
+    cart.done = True
     user.cart_id = 0
     db.add(user)
-    db.add(order)
+    db.add(cart)
     db.commit()
     return {
         "status":"success"
     }
 
-async def add_element_to_cart(db : Session,token: str,product_id,amount:int):
+async def add_element_to_cart(product_id,amount:str,db : Session,token: str):
+    amount = int(amount)
     user = get_user_from_token(db,token)
-    order = db.query(schemas.Order).filter(schemas.Order.id == user.cart_id).first()
+    cart = db.query(schemas.Cart).filter(schemas.Cart.id == user.cart_id).first()
     product = db.query(schemas.Product).filter(schemas.Product.id == product_id).first()
     if product is None:
         raise HTTPException(status_code=404,detail="Product not found")
-    if order is None:
-        raise HTTPException(status_code=404,detail="order not found")
-    prods = json.loads(order.products)
+    if cart is None:
+        raise HTTPException(status_code=404,detail="cart not found")
+    prods = json.loads(cart.products)
     found : bool = False
     for item in prods:
         if item["product_id"] == product_id:
@@ -55,9 +76,13 @@ async def add_element_to_cart(db : Session,token: str,product_id,amount:int):
     if found == False:
         prods.append({"product_id":product_id,"amount":amount,"price":amount*product.price})
     prods = json.dumps(prods)
-    order.products = prods
-    db.add(order)
+    cart.products = prods
+    cart.total =cart.total+ amount*product.price
+    db.add(cart)
     db.commit()
     return {
-        "status":"success"
+        "status":"success",
+        "products":cart.products,
+        "total":cart.total
     }
+

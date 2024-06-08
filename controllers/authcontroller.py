@@ -36,14 +36,14 @@ def create_access_token(user_id):
 
 def get_user_from_token(db : Session,token: str = Depends(oauth2_bearer)):
     info = get_information_token(token)
-    user = db.query(schemas.User).filter(schemas.User.id == info.get("user_id"))
+    user = db.query(schemas.User).filter(schemas.User.id == info.get("user_id")).first()
     if user is None:
         raise HTTPException(status_code=404,detail="User not found")
     return user
 
 def get_admin_info(db : Session,token: str = Depends(oauth2_bearer)):
     info = get_information_token(token)
-    user = db.query(schemas.User).filter(schemas.User.id == info.get("user_id"))
+    user = db.query(schemas.User).filter(schemas.User.id == info.get("user_id")).first()
     if user is None:
         raise HTTPException(status_code=404,detail="User not found")
     if user.role != 1:
@@ -108,6 +108,8 @@ async def sign_up_handler(cur: CreateUser, db: Session ):
     newUser.address = cur.address
     hashed_password = get_password_hash(cur.password)
     newUser.hashed_password = hashed_password
+    newUser.role = 0
+    newUser.cart_id = 0 
     db.add(newUser)
     db.commit()
     token = create_access_token(newUser.id)
