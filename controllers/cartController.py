@@ -13,6 +13,7 @@ def create_cart(db : Session ,token : str):
     cart.user_id = user.id
     cart.done = False
     cart.products ="[]"
+    jsonprods = json.loads(cart.products)
     cart.total = 0
     db.add(cart)
     db.commit()
@@ -22,7 +23,7 @@ def create_cart(db : Session ,token : str):
     db.commit()
     return {
         "status":"success",
-        "products":cart.products,
+        "products":jsonprods,
         "total":cart.total
     }
 
@@ -33,9 +34,11 @@ async def get_cart(db: Session,token :str):
     cart = db.query(schemas.Cart).filter(schemas.Cart.id == user.cart_id).first()
     if cart is None :
         return create_cart(db,token)
+    print("here")
+    jsonprods = json.loads(cart.products)
     return {
         "status":"success",
-        "products":cart.products,
+        "products":jsonprods,
         "total":cart.total
     }
 
@@ -63,6 +66,7 @@ async def add_element_to_cart(product_id,amount:str,db : Session,token: str):
     if cart is None:
         raise HTTPException(status_code=404,detail="cart not found")
     prods = json.loads(cart.products)
+    jsonprods = prods
     found : bool = False
     for item in prods:
         if item["product_id"] == product_id:
@@ -82,7 +86,7 @@ async def add_element_to_cart(product_id,amount:str,db : Session,token: str):
     db.commit()
     return {
         "status":"success",
-        "products":cart.products,
+        "products":jsonprods,
         "total":cart.total
     }
 
