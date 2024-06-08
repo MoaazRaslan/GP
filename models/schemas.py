@@ -28,8 +28,8 @@ class Product(Base):
     amount = Column(Integer)
     category = Column(String)
     tags = Column(String)
-    cnt_voter = Column(Integer)
-    sum_of_stars = Column(Integer)
+    cnt_voter = Column(Integer, default=0)
+    sum_of_stars = Column(Integer, default=0)
 
     product_rate_relation = relationship("Rate",back_populates="rate_product_relation")
     # product_order_relation = relationship("Cart",back_populates="order_product_relation")

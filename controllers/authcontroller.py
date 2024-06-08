@@ -108,7 +108,7 @@ async def sign_up(cur: CreateUser, db: Session ):
     newUser.address = cur.address
     hashed_password = get_password_hash(cur.password)
     newUser.hashed_password = hashed_password
-    newUser.role = 0
+    newUser.role = cur.role
     newUser.cart_id = 0 
     db.add(newUser)
     db.commit()
@@ -122,7 +122,8 @@ async def sign_up(cur: CreateUser, db: Session ):
             "address": newUser.address,
             "first_name": newUser.first_name,
             "last_name": newUser.last_name,
-            "photo": newUser.photo
+            "photo": newUser.photo,
+            "role": newUser.role
         }   
     }
 async def sign_in(db: Session, form_data: OAuth2PasswordRequestForm = Depends()):

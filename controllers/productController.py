@@ -80,14 +80,25 @@ async def update_product(db: Session, product_id: int, updated_product: UpdatePr
 
 async def rate_product(db: Session, product_id: int, number_stars: int, token: str):
     user = get_user_from_token(db, token)
+    exist = db.query(schemas.Rate).filter(schemas.Rate.product_id == product_id).filter(schemas.Rate.user_id == user.id).first()   
+    if exist is not None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You have already voted for this product")
+    
     newRate = schemas.Rate()
     newRate.product_id = product_id
     newRate.user_id = user.id
     newRate.stars = number_stars
-
     db.add(newRate)
-    db.commit(newRate)
+    db.commit()
+
+    db_product = db.query(schemas.Product).filter(schemas.Product.id == product_id).first()
+    db_product.sum_of_stars += number_stars
+    db_product.cnt_voter += 1
+
+    db.commit()
+    db.refresh(db_product)
+
     return {
         "status": "success",
-        "data": None
+        "data": db_product
     }
