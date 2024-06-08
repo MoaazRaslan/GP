@@ -98,7 +98,7 @@ async def changerole(db : Session,second_person_id :int ,token : str = Depends(o
         'status': 'success'
         }
 
-async def sign_up_handler(cur: CreateUser, db: Session ):
+async def sign_up(cur: CreateUser, db: Session ):
     newUser = schemas.User()
     newUser.username = cur.username
     newUser.first_name = cur.first_name
@@ -125,7 +125,7 @@ async def sign_up_handler(cur: CreateUser, db: Session ):
             "photo": newUser.photo
         }   
     }
-async def sign_in_handler(db: Session, form_data: OAuth2PasswordRequestForm = Depends()):
+async def sign_in(db: Session, form_data: OAuth2PasswordRequestForm = Depends()):
     if not verify_user(form_data.username, form_data.password, db):
         raise HTTPException(status_code=404, detail="User not found !")
     user = db.query(schemas.User).filter(schemas.User.username == form_data.username).first()
