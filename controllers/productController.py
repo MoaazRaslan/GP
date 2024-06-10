@@ -20,6 +20,7 @@ async def create_product(product: CreateProduct, db: Session, token: str):
     return {
         "status": "success",
         "data": {
+            "id": newProduct.id,
             "title": newProduct.title,
             "photo": newProduct.photo,
             "price": newProduct.price,
@@ -31,9 +32,30 @@ async def create_product(product: CreateProduct, db: Session, token: str):
     }
 
 
-async def get_all_products(db: Session, page: int, limit: int, search: str = ""):
-    products = db.query(schemas.Product).order_by(schemas.Product.id.asc()).filter(
-        schemas.Product.title.contains(search)).limit(limit).offset((page - 1) * limit).all()
+async def get_all_products(db: Session, page: int, limit: int, search: str, money: int, amount: int, category: str, tags: list):
+    # Start the query with base filters
+    query = db.query(schemas.Product).order_by(schemas.Product.average_rate.desc()).filter(
+        schemas.Product.title.contains(search)
+    )
+    
+    # Apply additional filters if provided
+    if money is not None:
+        query = query.filter(schemas.Product.price <= money)
+    
+    if amount is not None:
+        query = query.filter(schemas.Product.amount >= amount)
+    
+    if category:
+        query = query.filter(schemas.Product.category == category)
+    
+    # if tags:
+        # Assuming Product.tags is a relationship that can be checked with `any`
+        # If it's a simple array column, adapt accordingly
+        # query = query.filter(or_(*[schemas.Product.tags.contains(tag) for tag in tags]))
+
+    # Paginate the results
+    products = query.limit(limit).offset((page - 1) * limit).all()
+    
     return {
         "status": "success",
         "result": len(products),
@@ -94,6 +116,7 @@ async def rate_product(db: Session, product_id: int, number_stars: int, token: s
     db_product = db.query(schemas.Product).filter(schemas.Product.id == product_id).first()
     db_product.sum_of_stars += number_stars
     db_product.cnt_voter += 1
+    db_product.average_rate = 1.0 * db_product.sum_of_stars / db_product.cnt_voter
 
     db.commit()
     db.refresh(db_product)
