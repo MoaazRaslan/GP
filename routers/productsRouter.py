@@ -22,9 +22,13 @@ async def get_all_product_handler(
     db: Session = Depends(get_db),
     page: int = Query(1, ge=1, description="Page numebr"),
     limit: int = Query(10, ge=1, le=100, description="Items per page"),
-    search: str | None = Query("", description="Search based title of products")
+    search: str | None = Query("", description="Search based title of products"), 
+    money: int = Query(None, ge=0, description="filtering by less price"), 
+    amount: int = Query(None, ge=1, description="amount of items"), 
+    category: str = Query(None, description="filter by category"), 
+    tags: list = []
 ):
-    return await get_all_products(db, page, limit, search)
+    return await get_all_products(db, page, limit, search, money, amount, category, tags)
 
 
 @router.get("/{product_id}", status_code=status.HTTP_200_OK)

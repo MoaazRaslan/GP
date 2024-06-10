@@ -30,6 +30,7 @@ class Product(Base):
     tags = Column(String)
     cnt_voter = Column(Integer, default=0)
     sum_of_stars = Column(Integer, default=0)
+    average_rate = Column(Double, default=0)
 
     product_rate_relation = relationship("Rate",back_populates="rate_product_relation")
     # product_order_relation = relationship("Cart",back_populates="order_product_relation")
