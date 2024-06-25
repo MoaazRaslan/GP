@@ -17,7 +17,8 @@ def get_info_handler(db: session,token :str):
             "address": user.address,
             "first_name": user.first_name,
             "last_name": user.last_name,
-            "photo": user.photo
+            "photo": user.photo,
+            "role" : user.role
         }   
     }
 
