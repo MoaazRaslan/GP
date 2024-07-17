@@ -79,7 +79,7 @@ async def delete_product(db: Session, product_id: int, token: str):
     db.delete(db_product)
     db.commit()
     return {
-        "status": "sucess",
+        "status": "success",
     }
 
 async def update_product(db: Session, product_id: int, updated_product: UpdateProduct, token: str):
