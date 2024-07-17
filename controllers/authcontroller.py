@@ -50,6 +50,18 @@ def get_admin_info(db : Session,token: str = Depends(oauth2_bearer)):
         raise HTTPException(status_code=403,detail="You need to be an admin")
     return user
 
+#same above but i dont need return user, i need this for conditionally render the add product button if the user is an admin 
+def check_admin(db : Session,token: str = Depends(oauth2_bearer)):
+    info = get_information_token(token)
+    user = db.query(schemas.User).filter(schemas.User.id == info.get("user_id")).first()
+    if user is None:
+        return False
+    if user.role != 1:
+        return False
+    if user.role == 1 :
+        return True
+
+
 def get_information_token(token: str = Depends(oauth2_bearer)):
     try:
         user = jwt.decode(token, config("SECRET_KEY"), config("ALGORITHM"))
