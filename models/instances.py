@@ -12,6 +12,7 @@ class CreateUser(BaseModel):
     photo :str
     address :str
     role: int
+    authType: int
 
 class CreateProduct(BaseModel):
     title: str

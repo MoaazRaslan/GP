@@ -15,6 +15,7 @@ class User(Base):
     role = Column(Integer)
     favorites = Column(String)
     hashed_password = Column(String)
+    authType = Column(Integer)
 
     user_rate_relation = relationship("Rate",back_populates="rate_user_relation")
     user_order_relation = relationship("Cart",back_populates="order_user_relation")

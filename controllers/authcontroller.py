@@ -8,13 +8,27 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
+from authlib.integrations.starlette_client import OAuth, OAuthError
+from starlette.requests import Request
+from starlette.responses import RedirectResponse
+
 from models import schemas
 from models.instances import CreateUser
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-
+oauth = OAuth()
+oauth.register(
+    name='google',
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_id="185911706041-f1k4encstovl4olt4d9o4u9sev2v41po.apps.googleusercontent.com",
+    client_secret="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",
+    client_kwargs={
+        'scope': 'email openid profile',
+        'redirect_url': 'http://localhost:8000/auth'
+    }
+)
 
 def get_password_hash(password):
     return bcrypt_context.hash(password)
@@ -110,7 +124,8 @@ async def changerole(db : Session,second_person_id :int ,token : str = Depends(o
         'status': 'success'
         }
 
-async def sign_up(cur: CreateUser, db: Session ):
+
+async def sign_up(cur: CreateUser, db: Session):
     newUser = schemas.User()
     newUser.username = cur.username
     newUser.first_name = cur.first_name
@@ -118,10 +133,13 @@ async def sign_up(cur: CreateUser, db: Session ):
     newUser.last_name = cur.last_name
     newUser.photo = cur.photo
     newUser.address = cur.address
-    hashed_password = get_password_hash(cur.password)
-    newUser.hashed_password = hashed_password
-    newUser.role = cur.role
-    newUser.cart_id = 0 
+    newUser.hashed_password = None
+    if cur.authType == 1:
+        hashed_password = get_password_hash(cur.password)
+        newUser.hashed_password = hashed_password
+
+    newUser.role = 0
+    # validation and  error handling
     db.add(newUser)
     db.commit()
     token = create_access_token(newUser.id)
@@ -134,15 +152,14 @@ async def sign_up(cur: CreateUser, db: Session ):
             "address": newUser.address,
             "first_name": newUser.first_name,
             "last_name": newUser.last_name,
-            "photo": newUser.photo,
-            "role": newUser.role
-        }   
+            "photo": newUser.photo
+        }
     }
+    
 async def sign_in(db: Session, form_data: OAuth2PasswordRequestForm = Depends()):
     if not verify_user(form_data.username, form_data.password, db):
         raise HTTPException(status_code=404, detail="User not found !")
     user = db.query(schemas.User).filter(schemas.User.username == form_data.username).first()
-    print(user)
     token = create_access_token(user.id)
     return {
         'status': 'success',
@@ -156,3 +173,49 @@ async def sign_in(db: Session, form_data: OAuth2PasswordRequestForm = Depends())
             "photo": user.photo,
         }
     }
+    
+async def oauth_sign_in(request: Request):
+    url = request.url_for('auth')
+    return await oauth.google.authorize_redirect(request, url)
+
+
+async def oauth_callback(request: Request, db: Session):
+    try:
+        googleToken = await oauth.google.authorize_access_token(request)
+    except OAuthError as e:
+        print("[[[auth error! ]]]\n", e)
+        return
+
+    userInfo = googleToken.get('userinfo')
+    print("oauthUserInfo: ", userInfo)
+    user = db.query(schemas.User).filter(
+        schemas.User.email == userInfo.get("email")).first()
+    if (user):
+        token = create_access_token(user.id)
+        return {
+            'status': 'success',
+            'token': token,
+            'data': {
+                "username": user.username,
+                "email": user.email,
+                "address": user.address,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "photo": user.photo,
+            }
+        }
+    else:
+        print("user not exsisit!!!")
+        newUser = schemas.User()
+        newUser.username = userInfo.get("given_name")
+        newUser.first_name = userInfo.get("given_name")
+        newUser.email = userInfo.get("email")
+        newUser.last_name = userInfo.get("family_name")
+        newUser.photo = userInfo.get("picture")
+        newUser.address = "Aleppo"
+        newUser.authType = 2
+        newUser.role = 0
+        print("newUserInfo))) ", newUser.email)
+        sign_up_response = await sign_up(newUser, db)
+
+        return sign_up_response
